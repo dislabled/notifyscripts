@@ -1,5 +1,10 @@
 #!/usr/bin/python3
 
+# Add following rule to udev and add user to group video
+# /etc/udev/rules.d/backlight.rules:
+# ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="%k", RUN+="/bin/chgrp video /sys/class/backlight/%k/brightness"
+# ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="%k", RUN+="/bin/chmod g+w /sys/class/backlight/%k/brightness"
+
 import sys
 import argparse
 import notify2
@@ -13,26 +18,23 @@ parser.add_argument('-v', '--value', dest='value',
 args = parser.parse_args()
 
 value = args.value
-#print(value)
 
 def getval():
-    with open('/home/stian/scripts/notify/temp.txt', 'r') as f:
-    #with open('/sys/class/backlight/amdgpu_bl0/brightness', 'r') as f:
+    with open('/sys/class/backlight/amdgpu_bl0/brightness', 'r') as f:
         raw = int(f.read())
-    print('get')
-    print(raw)
     return raw
 
 
 def putval(value):
-    if value > 0 and value < 255:
-        with open('/home/stian/scripts/notify/temp.txt', 'w') as f:
-#        with open('/sys/class/backlight/amdgpu_bl0/brightness', 'w') as f:
+    if value > 255:
+        value = 255
+    if value > 0 and value <= 255:
+        with open('/sys/class/backlight/amdgpu_bl0/brightness', 'w') as f:
             f.write(str(value))
 
 
-def calc():
-    perc = round(getval()/2.55)
+def calc(raw):
+    perc = round(raw/2.55)
     return perc
 
 
@@ -54,12 +56,14 @@ def send_notify(message):
 if args.up:
     a = round(getval()+25)
     putval(a)
+    send_notify(calc(getval()))
 
 if args.down:
     a = round(getval()-25)
     putval(a)
+    send_notify(calc(getval()))
 
 if args.value:
-    percent = round(getval()/2.55)
     putval(round(value*2.55))
-    send_notify(percent)
+    send_notify(calc(getval()))
+

@@ -16,8 +16,8 @@ parser.add_argument('-d', '--down', action='store_true', help='Turns brightness 
 parser.add_argument('-v', '--value', dest='value',
                     help='Set a brightness value between 0 - 100%', type=int, choices=range(0, 100))
 args = parser.parse_args()
-
 value = args.value
+
 
 def getval():
     with open('/sys/class/backlight/amdgpu_bl0/brightness', 'r') as f:
@@ -40,7 +40,7 @@ def calc(raw):
 
 def send_notify(message):
     try:
-        with open('/tmp/brnottemp.txt', 'r') as num:
+        with open('/tmp/notify_brightness.tmp', 'r') as num:
             nid = num.read()
     except FileNotFoundError:
         nid = 0
@@ -49,7 +49,7 @@ def send_notify(message):
     n = notify2.Notification('Brightness', message=str(message))
     n.id = nid
     n.show()
-    with open('/tmp/brnottemp.txt', 'w') as num:
+    with open('/tmp/notify_brightness.tmp', 'w') as num:
         num.write(str(n.id))
 
 

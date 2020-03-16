@@ -16,7 +16,6 @@ parser.add_argument('-v', '--value', dest='value',
                     help='Set volume to a value between 0 - 100%', type=int, choices=range(0, 100))
 args = parser.parse_args()
 value = args.value
-
 p = pulsectl.Pulse('volume-control')
 
 
@@ -54,7 +53,7 @@ def toggle_mute():
 
 def send_notify(message):
     try:
-        with open('/tmp/notify_vil.tmp', 'r') as num:
+        with open('/tmp/notify_vol.tmp', 'r') as num:
             nid = num.read()
     except FileNotFoundError:
         nid = 0

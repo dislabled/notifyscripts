@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 
-
+# TODO:
+# [ ] Internal soundplayer
+# [ ] Different images according to sink?
+# [ ] Different images according to volume?
 
 import sys
 import argparse
@@ -18,6 +21,8 @@ args = parser.parse_args()
 value = args.value
 p = pulsectl.Pulse('volume-control')
 
+# Change the one image here: (for now)
+image = 'audio-volume-high'
 
 def get_active_sink():
     default = p.server_info().default_sink_name
@@ -60,6 +65,7 @@ def send_notify(message):
 
     notify2.init('Volume')
     n = notify2.Notification('Volume', message=str(message))
+    n.set_hint_string('image-path', image)
     n.id = nid
     n.show()
     with open('/tmp/notify_vol.tmp', 'w') as num:

@@ -18,6 +18,8 @@ parser.add_argument('-v', '--value', dest='value',
 args = parser.parse_args()
 value = args.value
 
+# Change the one image here: (for now)
+image = 'display-brightness'
 
 def getval():
     with open('/sys/class/backlight/amdgpu_bl0/brightness', 'r') as f:
@@ -47,6 +49,7 @@ def send_notify(message):
 
     notify2.init("Brightness")
     n = notify2.Notification('Brightness', message=str(message))
+    n.set_hint_string('image-path', image)
     n.id = nid
     n.show()
     with open('/tmp/notify_brightness.tmp', 'w') as num:

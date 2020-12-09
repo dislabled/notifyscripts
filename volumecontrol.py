@@ -4,6 +4,8 @@
 # [ ] Internal soundplayer
 # [ ] Different images according to sink?
 # [ ] Different images according to volume?
+# [ ] Rewrite to always set volume instead of change.
+#       Calculate value to add myself to be able to restrict to 100% volume
 
 import sys
 import argparse
@@ -23,6 +25,8 @@ p = pulsectl.Pulse('volume-control')
 
 # Change the one image here: (for now)
 image = 'audio-volume-high'
+home_path = os.path.expanduser('~')
+script_path = home_path + '/scripts/notify/'
 
 def get_active_sink():
     default = p.server_info().default_sink_name
@@ -35,7 +39,7 @@ def change_volume(val):
     sink = get_active_sink()
     p.volume_change_all_chans(sink, val)
     output = int(p.volume_get_all_chans(sink) * 100)
-    file = 'volume.wav'
+    file = script_path + 'volume.wav'
     os.system('aplay ' + file)
     return output
 
